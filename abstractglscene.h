@@ -1,10 +1,10 @@
 #ifndef ABSTRACTGLSCENE_H
 #define ABSTRACTGLSCENE_H
 
-#include <QOpenGLFunctions_1_1>
+#include <QOpenGLFunctions_3_3_Core>
 
 class QOpenGLWindow;
-class AbstractGLScene : protected QOpenGLFunctions_1_1
+class AbstractGLScene : protected QOpenGLFunctions_3_3_Core
 {
 public:
     AbstractGLScene(QOpenGLWindow *window = 0);
