@@ -2,10 +2,13 @@
 #include "resourcemanager.h"
 #include "spriterenderer.h"
 
-SpriteRenderer *Renderer;
+
+// Game-related State data
+SpriteRenderer  *Renderer;
+GameObject      *Player;
 
 Game::Game(SceneGLWindow* window):
-    AbstractGLScene(window)
+    AbstractGLScene(window), State(GAME_ACTIVE)
 {
 
 }
@@ -13,6 +16,7 @@ Game::Game(SceneGLWindow* window):
 Game::~Game()
 {
     delete Renderer;
+    delete Player;
 }
 void Game::initialize()
 {
@@ -31,11 +35,32 @@ void Game::Init()
     QMatrix4x4 projection;
     projection.ortho(0,this->window()->width(),this->window()->height(),0,-1,1);
     ResourceManager::GetShader("sprite").bind();
-    ResourceManager::GetShader("sprite").setUniformValue("image",0);
+    ResourceManager::GetShader("sprite").setUniformValue("sprite",0);
     ResourceManager::GetShader("sprite").setUniformValue("projection",projection);
 
-    ResourceManager::LoadTexture("../2D-Breakout/texture/awesomeface.png",GL_TRUE,"face");
+//    ResourceManager::LoadTexture("../2D-Breakout/textures/awesomeface.png",GL_TRUE,"face");
+//    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+    // Load textures
+    ResourceManager::LoadTexture("../2D-Breakout/textures/background.jpg", GL_FALSE, "background");
+    ResourceManager::LoadTexture("../2D-Breakout/textures/awesomeface.png", GL_TRUE, "face");
+    ResourceManager::LoadTexture("../2D-Breakout/textures/block.png", GL_FALSE, "block");
+    ResourceManager::LoadTexture("../2D-Breakout/textures/block_solid.png", GL_FALSE, "block_solid");
+    ResourceManager::LoadTexture("../2D-Breakout/textures/paddle.png", true, "paddle");
+    // Set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+    // Load levels
+    GameLevel one; one.Load("../2D-Breakout/levels/one.lvl", this->window()->width(), this->window()->height() * 0.5);
+    GameLevel two; two.Load("../2D-Breakout/levels/two.lvl", this->window()->width(), this->window()->height() * 0.5);
+    GameLevel three; three.Load("../2D-Breakout/levels/three.lvl", this->window()->width(), this->window()->height() * 0.5);
+    GameLevel four; four.Load("../2D-Breakout/levels/four.lvl", this->window()->width(), this->window()->height() * 0.5);
+    this->Levels.push_back(one);
+    this->Levels.push_back(two);
+    this->Levels.push_back(three);
+    this->Levels.push_back(four);
+    this->Level = 0;
+    // Configure game objects
+    QVector2D playerPos = QVector2D(this->window()->width() / 2 - PLAYER_SIZE.x() / 2, this->window()->height() - PLAYER_SIZE.y());
+    Player = new GameObject(playerPos, PLAYER_SIZE, &ResourceManager::GetTexture("paddle"));
 }
 // 使用定时器更新游戏时间
 void Game::Update(GLfloat dt)
@@ -59,5 +84,13 @@ void Game::paint()
 
 void Game::Render()
 {
-    Renderer->DrawSprite(ResourceManager::GetTexture("face"),QVector2D(200,200),QVector2D(300,400),45.f,QVector3D(0.f,1.f,0.f));
+    if (this->State == GAME_ACTIVE)
+    {
+        // Draw background
+        Renderer->DrawSprite(ResourceManager::GetTexture("background"), QVector2D(0, 0), QVector2D(this->window()->width(), this->window()->height()), 0.0f);
+        // Draw level
+        this->Levels[this->Level].Draw(*Renderer);
+        // Draw player
+        Player->Draw(*Renderer);
+    }
 }

@@ -14,6 +14,8 @@ void SpriteRenderer::DrawSprite(QOpenGLTexture &texture, QVector2D position, QVe
     this->shader->bind();
     QMatrix4x4 model;
     model.translate(QVector3D(position,0.0f));
+
+    model.translate(QVector3D(0.5f * size.x(), 0.5f * size.y(), 0.0f));
     model.rotate(rotate,QVector3D(0,0,1));
     model.translate(QVector3D(-.5f*size.x(), -0.5f * size.y(), 0.0f));
 
