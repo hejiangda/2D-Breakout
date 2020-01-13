@@ -5,7 +5,7 @@
 #include <QVector2D>
 #include "gamelevel.h"
 #include "gameobject.h"
-
+#include "ballobject.h"
 // Represents the current state of the game
 enum GameState {
     GAME_ACTIVE,
@@ -30,19 +30,25 @@ public:
 public:
     // Game state
     GameState              State;
-    GLboolean              Keys[1024];
-//    GLuint                 Width, Height;
+    //    GLboolean              Keys[1024];
+    //    GLuint                 Width, Height;
     std::vector<GameLevel> Levels;
     GLuint                 Level;
     // Constructor/Destructor
-//    Game(GLuint width, GLuint height);
+    //    Game(GLuint width, GLuint height);
 
     // GameLoop
     // complete in sceneglwindow
-//    void ProcessInput(GLfloat dt);
-    void Update(GLfloat dt);
+    void ProcessInput(Qt::Key k);
+    void UpdateGame(GLfloat dt);
     void Render();
     void Init();
+    void DoCollisions();
+    GLboolean CheckCollision(BallObject &one, GameObject &two);
+    QVector2D clamp(QVector2D value, QVector2D min, QVector2D max);
+private:
+    float deltat=0.0075;
+
 };
 
 #endif // GAME_H
