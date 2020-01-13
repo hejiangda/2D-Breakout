@@ -3,8 +3,6 @@
 #include "abstractglscene.h"
 #include "sceneglwindow.h"
 
-
-
 // Represents the current state of the game
 enum GameState {
     GAME_ACTIVE,
@@ -18,23 +16,23 @@ class Game:public QObject, public AbstractGLScene
 public:
     Game(SceneGLWindow* window);
     ~Game();
-
+    // Initialize game state (load all shaders/textures/levels)
     void initialize();
     void paint();
 public:
     // Game state
     GameState              State;
     GLboolean              Keys[1024];
-    GLuint                 Width, Height;
+//    GLuint                 Width, Height;
     // Constructor/Destructor
 //    Game(GLuint width, GLuint height);
 
-    // Initialize game state (load all shaders/textures/levels)
-    void Init();
     // GameLoop
-    void ProcessInput(GLfloat dt);
+    // complete in sceneglwindow
+//    void ProcessInput(GLfloat dt);
     void Update(GLfloat dt);
     void Render();
+    void Init();
 };
 
 #endif // GAME_H

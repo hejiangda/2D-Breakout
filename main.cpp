@@ -5,6 +5,11 @@
 int main(int argc, char **argv) {
     QGuiApplication app(argc, argv);
     SceneGLWindow window;
+    // 反走样
+    QSurfaceFormat fmt;
+    fmt.setSamples(16);
+    QSurfaceFormat::setDefaultFormat(fmt);
+    window.setFormat(fmt);
 
     Game scene(&window);
     window.setScene(&scene);
